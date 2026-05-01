@@ -1,0 +1,157 @@
+# AI Trainer Platform - Конфигурация по умолчанию
+
+# Общие настройки
+general:
+  project_name: "My AI Project"
+  output_dir: "./checkpoints"
+  log_dir: "./logs"
+  random_seed: 42
+  device: "auto"  # auto, cuda, cpu
+
+# Настройки данных
+data:
+  # Пути к данным (поддерживаются списки путей)
+  paths:
+    - "./data"
+  
+  # Типы файлов для обработки
+  file_types:
+    - ".txt"
+    - ".csv"
+    - ".json"
+    - ".pdf"
+    - ".docx"
+    - ".xlsx"
+    - ".jpg"
+    - ".png"
+    - ".webp"
+  
+  # Предобработка
+  preprocessing:
+    text:
+      lowercase: true
+      remove_special_chars: true
+      max_length: 512
+      encoding: "utf-8"
+    
+    images:
+      resize: [224, 224]
+      normalize: true
+      augment: false
+    
+    # Разбиение на датасеты
+    split:
+      train: 0.8
+      val: 0.1
+      test: 0.1
+    
+    # Балансировка классов
+    balance_classes: false
+    
+    # Размер чанка для больших файлов
+    chunk_size: 1000
+
+# Настройки модели
+model:
+  type: "supervised"  # supervised, genetic, rl
+  architecture: "transformer"  # transformer, cnn, rnn, mlp, custom
+  
+  # Параметры архитектуры
+  params:
+    # Для трансформера
+    hidden_size: 768
+    num_layers: 6
+    num_heads: 8
+    dropout: 0.1
+    
+    # Для CNN
+    # channels: [32, 64, 128, 256]
+    
+    # Для MLP
+    # hidden_dims: [512, 256, 128]
+  
+  # Загрузка предобученной модели
+  pretrained: null  # путь к весам или название модели
+  
+  # Кастомная конфигурация
+  custom_config: null  # путь к JSON с архитектурой
+
+# Гиперпараметры обучения
+training:
+  # Режим обучения
+  mode: "finite"  # finite, infinite
+  
+  # Количество эпох/поколений
+  epochs: 100
+  max_steps: null  # если null, то до конца эпохи
+  
+  # Размер батча
+  batch_size: 32
+  gradient_accumulation_steps: 1
+  
+  # Оптимизатор
+  optimizer: "adamw"
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  
+  # Планировщик
+  scheduler: "cosine"
+  warmup_steps: 100
+  
+  # Градиенты
+  gradient_clipping: 1.0
+  mixed_precision: true  # AMP для ускорения
+  
+  # Чекпоинты
+  checkpoint:
+    save_every: 10  # эпох
+    save_best: true
+    metric: "val_loss"  # метрика для лучшего чекпоинта
+  
+  # Ранняя остановка
+  early_stopping:
+    enabled: true
+    patience: 10
+    min_delta: 0.0001
+
+# GPU настройки
+gpu:
+  # Использование GPU
+  enabled: true
+  
+  # ID GPU (для мульти-GPU)
+  device_ids: [0]
+  
+  # Управление памятью
+  memory_management:
+    empty_cache_frequency: 1  # каждые N шагов
+    max_memory_fraction: 0.9
+    allow_tf32: true
+  
+  # Gradient checkpointing для экономии памяти
+  gradient_checkpointing: false
+
+# Логирование
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  console: true
+  file: true
+  rotation:
+    max_bytes: 10485760  # 10 MB
+    backup_count: 5
+  
+  # Метрики для логирования
+  metrics:
+    - "loss"
+    - "accuracy"
+    - "learning_rate"
+  
+  # Частота логирования
+  log_every_n_steps: 10
+
+# OCR настройки (для изображений со сканами)
+ocr:
+  enabled: false
+  engine: "tesseract"  # tesseract, paddle
+  languages: ["rus", "eng"]
+  config: ""
