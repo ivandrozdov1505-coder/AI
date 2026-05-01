@@ -13,21 +13,26 @@
 .vscode/
 .idea/
 
-# OS
-.DS_Store
-Thumbs.db
-
 # Dependencies
 node_modules/
-venv/
 .venv/
+venv/
 __pycache__/
 .mypy_cache/
 .pytest_cache/
+coverage/
+htmlcov/
+.coverage
+
+# Build artifacts
 dist/
 build/
 target/
 .gradle/
+
+# OS generated files
+.DS_Store
+Thumbs.db
 
 # Compiled files
 *.pyc
@@ -39,11 +44,6 @@ target/
 *.a
 *.obj
 *.out
-
-# Coverage
-coverage/
-htmlcov/
-.coverage
 
 # Compressed files
 *.zip
@@ -64,4 +64,8 @@ htmlcov/
 *.Z
 *.lz
 *.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
 ```
