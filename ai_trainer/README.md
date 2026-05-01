@@ -60,10 +60,28 @@ install_and_run.bat
 # Базовая установка (CPU)
 pip install -r requirements.txt
 
-# Для CUDA 12 (GPU с поддержкой CUDA 12.x)
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+# Для CUDA 12.1+ (GPU с поддержкой CUDA 12.x) - рекомендуется
+pip install -r requirements-cuda.txt
+
+# Или вручную для CUDA 12.1:
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 pip install -r requirements.txt
 ```
+
+#### Проверка версии CUDA
+
+Перед установкой проверьте версию CUDA в вашей системе:
+
+```bash
+# Windows PowerShell
+nvidia-smi
+
+# Или через командную строку
+nvcc --version
+```
+
+Для CUDA 12.x используйте `requirements-cuda.txt`. Для более старых версий:
+- CUDA 11.8: замените `cu121` на `cu118` в требованиях
 
 ### Запуск приложения
 
@@ -227,10 +245,44 @@ class CustomParser(BaseParser):
 
 ## 🔍 Диагностика
 
-### Проверка GPU
+### Проверка GPU и CUDA
+
 ```bash
+# Быстрая проверка через утилиту
 python -c "from utils.gpu_utils import check_cuda; print(check_cuda())"
+
+# Или через новый модуль device
+python -c "from utils.device import print_device_summary; print_device_summary()"
+
+# Проверка доступности torch.cuda
+python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}'); print(f'CUDA version: {torch.version.cuda}')"
 ```
+
+### Диагностика проблем с CUDA
+
+Если CUDA не доступна:
+
+1. **Проверьте драйверы NVIDIA:**
+   ```bash
+   nvidia-smi
+   ```
+   Должна отображаться информация о GPU и версии драйвера.
+
+2. **Проверьте версию CUDA:**
+   ```bash
+   nvcc --version
+   ```
+
+3. **Переустановите PyTorch с правильной версией CUDA:**
+   ```bash
+   # Для CUDA 12.1
+   pip uninstall torch torchvision torchaudio
+   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+   ```
+
+4. **Проверьте совместимость версий:**
+   - CUDA 12.x требует PyTorch 2.1+
+   - CUDA 11.8 требует PyTorch 2.0+
 
 ### Проверка импортов
 ```bash

@@ -73,7 +73,7 @@ def main():
     
     # Проверка CUDA
     if not args.cpu_only:
-        from utils.gpu_utils import check_cuda, get_device_info
+        from utils.gpu_utils import check_cuda, get_device_info, GPUManager
         cuda_info = check_cuda()
         
         if cuda_info['available']:
@@ -81,7 +81,14 @@ def main():
         else:
             logger.warning("⚠️ CUDA недоступна, будет использоваться CPU")
             logger.info("Для GPU поддержки установите PyTorch с CUDA:")
+            logger.info("  pip install -r requirements-cuda.txt")
+            logger.info("Или вручную:")
             logger.info("  pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121")
+    
+    # Инициализация менеджера устройств
+    from utils.device import get_auto_device
+    device = get_auto_device()
+    logger.info(f"📌 Используемое устройство: {device}")
     
     # Загрузка конфигурации
     config_path = Path(args.config)
