@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  ai-trainer:
+    build: .
+    ports:
+      - "7860:7860"  # Gradio веб-интерфейс
+    volumes:
+      - ./logs:/app/logs  # Сохранение логов на хост
+      - ./configs:/app/configs  # Конфигурации
+      - ./models:/app/models  # Сохранённые модели
+    environment:
+      - GRADIO_SERVER_NAME=0.0.0.0
+      - PYTHONUNBUFFERED=1
+    # Для GPU поддержки раскомментируйте строки ниже:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+    restart: unless-stopped
+
+# ============================================================
+# ИНСТРУКЦИЯ ПО ЗАПУСКУ:
+#
+# 1. Сборка образа (выполнить один раз):
+#    docker-compose build
+#
+# 2. Запуск контейнера:
+#    docker-compose up
+#
+# 3. Запуск в фоновом режиме:
+#    docker-compose up -d
+#
+# 4. Просмотр логов:
+#    docker-compose logs -f
+#
+# 5. Остановка:
+#    docker-compose down
+#
+# 6. Доступ к веб-интерфейсу:
+#    Откройте в браузере: http://localhost:7860
+#
+# ============================================================
+# ДЛЯ ЗАПУСКА С GPU (требуется NVIDIA Container Toolkit):
+#
+# 1. Раскомментируйте секцию 'deploy' выше в этом файле
+# 2. Соберите образ с поддержкой CUDA:
+#    Измените Dockerfile, заменив первую строку на:
+#    FROM pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime
+# 3. Пересоберите и запустите:
+#    docker-compose build
+#    docker-compose up -d
+# ============================================================
