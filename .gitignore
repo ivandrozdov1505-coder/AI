@@ -1,41 +1,54 @@
 ```
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+# Docker
+.dockerignore
+Dockerfile
+docker-compose.yml
 
-# Logs
+# Logs and temp files
 *.log
-logs/
+*.tmp
 
 # Environment
 .env
 .env.local
 .env.*
-.venv/
-venv/
-ENV/
 
-# IDE
+# Editors
 .vscode/
 .idea/
-*.swp
-*.swo
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.gitattributes
+.next
+.pytest_cache/
+.mypy_cache/
+.hypothesis/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.manifest
+*.spec
+.mr.developer.cfg
+.spyderproject
+.spyproject
+.ropeproject
+.sitepackages
 ```
