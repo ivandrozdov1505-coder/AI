@@ -223,7 +223,7 @@ class ModelManager:
             raise ValueError("Модель не создана")
         
         try:
-            state_dict = torch.load(pretrained, map_location=self.device)
+            state_dict = torch.load(pretrained, map_location=self.device, weights_only=True)
             self.model.load_state_dict(state_dict)
             logger.info(f"Предобученные веса загружены: {pretrained}")
         except Exception as e:

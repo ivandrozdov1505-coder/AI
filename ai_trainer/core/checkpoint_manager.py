@@ -48,7 +48,7 @@ class CheckpointManager:
         """Сканирование существующих чекпоинтов"""
         for path in self.checkpoint_dir.glob("checkpoint_*.pt"):
             try:
-                checkpoint = torch.load(path, map_location='cpu')
+                checkpoint = torch.load(path, map_location='cpu', weights_only=True)
                 self.checkpoint_history.append({
                     'path': str(path),
                     'epoch': checkpoint.get('epoch', 0),
@@ -170,7 +170,7 @@ class CheckpointManager:
         if not path.exists():
             raise FileNotFoundError(f"Чекпоинт не найден: {path}")
         
-        checkpoint = torch.load(path, map_location='cpu')
+        checkpoint = torch.load(path, map_location='cpu', weights_only=True)
         
         # Загрузка модели
         model.load_state_dict(checkpoint['model_state_dict'])
@@ -242,7 +242,7 @@ class CheckpointManager:
         if not self.best_checkpoint_path:
             raise ValueError("Нет лучшего чекпоинта")
         
-        checkpoint = torch.load(self.best_checkpoint_path, map_location='cpu')
+        checkpoint = torch.load(self.best_checkpoint_path, map_location='cpu', weights_only=True)
         
         inference_model = {
             'model_state_dict': checkpoint['model_state_dict'],
