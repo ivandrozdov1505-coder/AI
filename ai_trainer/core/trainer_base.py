@@ -242,7 +242,7 @@ class BaseTrainer(ABC):
             return False
         
         try:
-            checkpoint = torch.load(checkpoint_path, map_location=self.device)
+            checkpoint = torch.load(checkpoint_path, map_location=self.device, weights_only=True)
             
             self.model.load_state_dict(checkpoint['model_state_dict'])
             self.state.current_epoch = checkpoint['epoch']
