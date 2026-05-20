@@ -74,7 +74,7 @@ class TestCheckpointManager(unittest.TestCase):
         checkpoint1 = {'epoch': 1, 'step': 100, 'best_metric': 0.5, 'timestamp': 1000.0}
         checkpoint_best = {'epoch': 2, 'step': 200, 'best_metric': 0.1, 'timestamp': 2000.0}
 
-        def mock_load(path, map_location=None):
+        def mock_load(path, map_location=None, weights_only=False):
             if path == path1: return checkpoint1
             if path == path2: return checkpoint_best
             return {}
@@ -104,7 +104,7 @@ class TestCheckpointManager(unittest.TestCase):
 
         mock_glob.return_value = [path1, path2]
 
-        def mock_load(path, map_location=None):
+        def mock_load(path, map_location=None, weights_only=False):
             if path == path1: raise Exception("Load error")
             return {'epoch': 1, 'timestamp': 1000.0}
 
