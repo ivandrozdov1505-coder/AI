@@ -2,8 +2,12 @@
 """
 AI Trainer Platform - Точка входа в приложение
 Запуск: python main.py
+
+Автоматически создает виртуальное окружение и устанавливает зависимости.
+Для NVIDIA GPU автоматически используется requirements-cuda.txt.
 """
 
+import os
 import sys
 import argparse
 import logging
@@ -11,6 +15,24 @@ from pathlib import Path
 
 # Добавляем проект в path
 sys.path.insert(0, str(Path(__file__).parent))
+
+# Bootstrap: автоматическая установка зависимостей
+if os.environ.get('AI_TRAINER_BOOTSTRAPPED') != '1':
+    # Проверяем, запущены ли из .venv
+    in_venv = (hasattr(sys, 'real_prefix') or 
+               (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix))
+    
+    if not in_venv:
+        # Запускаем bootstrap
+        try:
+            from utils.bootstrap import bootstrap
+            bootstrap()
+        except Exception as e:
+            print(f"⚠️  Bootstrap failed: {e}")
+            print("Please install dependencies manually:")
+            print("  pip install -r requirements.txt")
+            print("  или для CUDA:")
+            print("  pip install -r requirements-cuda.txt")
 
 
 def main():

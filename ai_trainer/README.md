@@ -2,6 +2,60 @@
 
 Платформа для создания, настройки и обучения нейросетей с графическим интерфейсом.
 
+## 🚀 Быстрый старт
+
+### Простой запуск (рекомендуется)
+
+**Windows:**
+```bash
+python main.py
+```
+или просто дважды кликните на `run.bat`
+
+**Linux/Mac:**
+```bash
+python main.py
+# или
+./run.sh
+```
+
+Приложение автоматически:
+- Создаст виртуальное окружение `.venv` (если нет)
+- Установит все зависимости
+- Определит NVIDIA GPU и установит CUDA-версию PyTorch (если есть видеокарта)
+- Запустит веб-интерфейс на `http://127.0.0.1:7860`
+
+### Для владельцев NVIDIA RTX 2060 и других GPU
+
+Убедитесь, что:
+1. Установлен драйвер NVIDIA
+2. Команда `nvidia-smi` работает в терминале
+
+Приложение автоматически обнаружит GPU и установит правильную версию PyTorch с CUDA 12.1.
+
+### Ручная установка (опционально)
+
+Если автоматический запуск не работает:
+
+```bash
+# Создать виртуальное окружение вручную
+python -m venv .venv
+
+# Активировать (Windows)
+.venv\Scripts\activate
+# Активировать (Linux/Mac)
+source .venv/bin/activate
+
+# Установить зависимости (CPU)
+pip install -r requirements.txt
+
+# Или для CUDA (RTX 2060 и другие NVIDIA)
+pip install -r requirements-cuda.txt
+
+# Запустить приложение
+python main.py
+```
+
 ## 📁 Структура проекта
 
 ```
@@ -248,19 +302,17 @@ class CustomParser(BaseParser):
 ### Проверка GPU и CUDA
 
 ```bash
-# Быстрая проверка через утилиту
+# Быстрая проверка через Python
+python -c "import torch; print('CUDA available:', torch.cuda.is_available()); print('Device:', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU')"
+
+# Через утилиту проекта
 python -c "from utils.gpu_utils import check_cuda; print(check_cuda())"
 
 # Или через новый модуль device
 python -c "from utils.device import print_device_summary; print_device_summary()"
-
-# Проверка доступности torch.cuda
-python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}'); print(f'CUDA version: {torch.version.cuda}')"
 ```
 
-### Диагностика проблем с CUDA
-
-Если CUDA не доступна:
+### Если CUDA не доступна
 
 1. **Проверьте драйверы NVIDIA:**
    ```bash
@@ -268,31 +320,18 @@ python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}'); 
    ```
    Должна отображаться информация о GPU и версии драйвера.
 
-2. **Проверьте версию CUDA:**
+2. **Проверьте совместимость:**
+   - RTX 2060 поддерживает CUDA 12.x
+   - Требуется PyTorch 2.1+
+
+3. **Переустановите зависимости:**
    ```bash
-   nvcc --version
+   # Удалить .venv и установить заново
+   rmdir /s .venv  # Windows
+   rm -rf .venv    # Linux/Mac
+   
+   python main.py  # Автоматически переустановит
    ```
-
-3. **Переустановите PyTorch с правильной версией CUDA:**
-   ```bash
-   # Для CUDA 12.1
-   pip uninstall torch torchvision torchaudio
-   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-   ```
-
-4. **Проверьте совместимость версий:**
-   - CUDA 12.x требует PyTorch 2.1+
-   - CUDA 11.8 требует PyTorch 2.0+
-
-### Проверка импортов
-```bash
-python -c "
-from core.trainer_base import BaseTrainer
-from core.model_manager import ModelManager
-from trainers.supervised_trainer import SupervisedTrainer
-print('✅ Все модули импортируются корректно')
-"
-```
 
 ## 📄 Лицензия
 

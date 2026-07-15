@@ -205,15 +205,54 @@ def create_app() -> gr.Blocks:
                 refresh_btn.click(fn=lambda: (app_instance.get_training_status(), app_instance.get_logs()), outputs=[status_box, logs_box])
                 clear_btn.click(fn=lambda: (clear_ui_logs(), "Логи очищены"), outputs=[logs_box])
         
-        app.load(fn=app_instance.get_training_status, outputs=[status_box], every=2)
+        # Gradio 6 compatible auto-refresh using Timer
+        status_timer = gr.Timer(2)
+        status_timer.tick(fn=app_instance.get_training_status, outputs=[status_box])
     
     return app
 
 
-def launch_app(server_name: str = "0.0.0.0", server_port: int = 7860):
+def launch_app(server_name: str = "127.0.0.1", server_port: int = 7860):
+    """Launch Gradio app with proper error handling and port fallback"""
+    import socket
+    
+    # Find available port if default is busy
+    def find_free_port(start_port: int) -> int:
+        for port in range(start_port, start_port + 100):
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.bind(('127.0.0.1', port))
+                    return port
+            except OSError:
+                continue
+        return start_port  # Fallback to original
+    
+    actual_port = find_free_port(server_port)
+    if actual_port != server_port:
+        print(f"⚠️  Port {server_port} is busy, using port {actual_port}")
+    
     app = create_app()
     app.queue()
-    app.launch(server_name=server_name, server_port=server_port)
+    
+    # Print startup info
+    print("=" * 60)
+    print("🚀 AI Trainer Platform")
+    print("=" * 60)
+    
+    # GPU info
+    cuda_info = check_cuda()
+    if cuda_info["available"]:
+        gpu_name = torch.cuda.get_device_name(0) if cuda_info["device_count"] > 0 else "Unknown"
+        print(f"🎮 GPU: {gpu_name}")
+        print(f"✅ CUDA Version: {cuda_info['version']}")
+    else:
+        print("💻 Device: CPU")
+    
+    print(f"🌐 URL: http://{server_name}:{actual_port}")
+    print(f"📝 Logs: ./logs/")
+    print("=" * 60)
+    
+    app.launch(server_name=server_name, server_port=actual_port, quiet=False)
 
 
 if __name__ == "__main__":
